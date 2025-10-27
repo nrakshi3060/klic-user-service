@@ -90,14 +90,368 @@ paths:
       responses:
         '204':
           description: User deleted successfully
+  /posts:
+    get:
+      summary: Get all posts
+      operationId: getAllPosts
+      responses:
+        '200':
+          description: A list of posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+    post:
+      summary: Create a new post
+      operationId: createPost
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      responses:
+        '201':
+          description: The created post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+  /posts/{id}:
+    get:
+      summary: Get a post by ID
+      operationId: getPostById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: The post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: Post not found
+    put:
+      summary: Update an existing post
+      operationId: updatePost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      responses:
+        '200':
+          description: The updated post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: Post not found
+    delete:
+      summary: Delete a post
+      operationId: deletePost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Post deleted successfully
+  /post-comments:
+    get:
+      summary: Get all post comments
+      operationId: getAllPostComments
+      responses:
+        '200':
+          description: A list of post comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostComment'
+    post:
+      summary: Create a new post comment
+      operationId: createPostComment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostComment'
+      responses:
+        '201':
+          description: The created post comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostComment'
+  /post-comments/{id}:
+    get:
+      summary: Get a post comment by ID
+      operationId: getPostCommentById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: The post comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostComment'
+        '404':
+          description: Post comment not found
+    put:
+      summary: Update an existing post comment
+      operationId: updatePostComment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostComment'
+      responses:
+        '200':
+          description: The updated post comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostComment'
+        '404':
+          description: Post comment not found
+    delete:
+      summary: Delete a post comment
+      operationId: deletePostComment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Post comment deleted successfully
+  /post-likes:
+    get:
+      summary: Get all post likes
+      operationId: getAllPostLikes
+      responses:
+        '200':
+          description: A list of post likes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostLike'
+    post:
+      summary: Create a new post like
+      operationId: createPostLike
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostLike'
+      responses:
+        '201':
+          description: The created post like
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostLike'
+  /post-likes/{id}:
+    get:
+      summary: Get a post like by ID
+      operationId: getPostLikeById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: The post like
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostLike'
+        '404':
+          description: Post like not found
+    put:
+      summary: Update an existing post like
+      operationId: updatePostLike
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostLike'
+      responses:
+        '200':
+          description: The updated post like
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostLike'
+        '404':
+          description: Post like not found
+    delete:
+      summary: Delete a post like
+      operationId: deletePostLike
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Post like deleted successfully
+  /comment-likes:
+    get:
+      summary: Get all comment likes
+      operationId: getAllCommentLikes
+      responses:
+        '200':
+          description: A list of comment likes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CommentLike'
+    post:
+      summary: Create a new comment like
+      operationId: createCommentLike
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentLike'
+      responses:
+        '201':
+          description: The created comment like
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentLike'
+  /comment-likes/{id}:
+    get:
+      summary: Get a comment like by ID
+      operationId: getCommentLikeById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: The comment like
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentLike'
+        '404':
+          description: Comment like not found
+    put:
+      summary: Update an existing comment like
+      operationId: updateCommentLike
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentLike'
+      responses:
+        '200':
+          description: The updated comment like
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentLike'
+        '404':
+          description: Comment like not found
+    delete:
+      summary: Delete a comment like
+      operationId: deleteCommentLike
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Comment like deleted successfully
 components:
   schemas:
     User:
       type: object
+      required:
+        - firstName
+        - lastName
+        - username
+        - email
       properties:
         id:
           type: string
           format: uuid
+          readOnly: true
         firstName:
           type: string
         lastName:
@@ -107,11 +461,131 @@ components:
         email:
           type: string
           format: email
+          pattern: |
+            ^[a-zA-Z0-9_+&*-]+(?:\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,7}$
         signupLocation:
           type: string
         createDateTime:
           type: string
           format: date-time
+          readOnly: true
         updateDateTime:
           type: string
           format: date-time
+          readOnly: true
+    Post:
+      type: object
+      required:
+        - userId
+        - postDescription
+        - postType
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        userId:
+          type: string
+          format: uuid
+        postDescription:
+          type: string
+        postType:
+          type: string
+          enum: [PHOTO, VIDEO, TEXT]
+        totalLikes:
+          type: integer
+          readOnly: true
+        totalComments:
+          type: integer
+          readOnly: true
+        createDateTime:
+          type: string
+          format: date-time
+          readOnly: true
+        updateDateTime:
+          type: string
+          format: date-time
+          readOnly: true
+    PostComment:
+      type: object
+      required:
+        - postId
+        - userId
+        - commentText
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        postId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        parentCommentId:
+          type: string
+          format: uuid
+        commentText:
+          type: string
+        totalLikes:
+          type: integer
+          readOnly: true
+        createDateTime:
+          type: string
+          format: date-time
+          readOnly: true
+        updateDateTime:
+          type: string
+          format: date-time
+          readOnly: true
+    PostLike:
+      type: object
+      required:
+        - postId
+        - userId
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        postId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        isLike:
+          type: boolean
+          default: true
+        createDateTime:
+          type: string
+          format: date-time
+          readOnly: true
+    CommentLike:
+      type: object
+      required:
+        - commentId
+        - userId
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        commentId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        isLike:
+          type: boolean
+          default: true
+        createDateTime:
+          type: string
+          format: date-time
+          readOnly: true
+        updateDateTime:
+          type: string
+          format: date-time
+          readOnly: true

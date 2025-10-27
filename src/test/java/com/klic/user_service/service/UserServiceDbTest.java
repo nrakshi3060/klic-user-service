@@ -14,13 +14,13 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-class UserServiceTest {
+class UserServiceDbTest {
 
     @Mock
     private UserRepository userRepository;
 
     @InjectMocks
-    private UserService userService;
+    private UserServiceDb userServiceDb;
 
     @BeforeEach
     void setUp() {
@@ -37,7 +37,7 @@ class UserServiceTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        Optional<User> result = userService.getUserById(userId);
+        Optional<User> result = userServiceDb.getUserById(userId);
 
         assertEquals(user, result.get());
     }

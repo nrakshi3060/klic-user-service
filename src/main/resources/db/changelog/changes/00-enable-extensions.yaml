@@ -1,7 +1,0 @@
-databaseChangeLog:
-  - changeSet:
-      id: 00-enable-extensions
-      author: your_name
-      changes:
-        - sql: CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-        - sql: CREATE EXTENSION IF NOT EXISTS "citext";

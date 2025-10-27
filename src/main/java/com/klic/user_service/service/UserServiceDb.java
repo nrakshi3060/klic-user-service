@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class UserService {
+public class UserServiceDb {
 
     private final UserRepository userRepository;
 

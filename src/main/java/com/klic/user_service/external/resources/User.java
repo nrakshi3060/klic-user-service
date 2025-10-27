@@ -15,7 +15,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users")
+@Table(name = "klic.USERS")
 @Setter
 @Getter
 @NoArgsConstructor
@@ -49,6 +49,9 @@ public class User {
 
     @PrePersist
     protected void onCreate() {
+        if (this.id == null) {
+            this.id = UUID.randomUUID();
+        }
         this.createDateTime = OffsetDateTime.now();
         this.updateDateTime = OffsetDateTime.now();
     }

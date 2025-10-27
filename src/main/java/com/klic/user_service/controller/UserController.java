@@ -3,7 +3,7 @@ package com.klic.user_service.controller;
 import com.klic.user_service.api.UsersApi;
 import com.klic.user_service.mapper.UserMapper;
 import com.klic.user_service.model.User;
-import com.klic.user_service.service.UserService;
+import com.klic.user_service.service.UserServiceDb;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,31 +17,31 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserController implements UsersApi {
 
-    private final UserService userService;
+    private final UserServiceDb userServiceDb;
 
     @Override
     public ResponseEntity<User> createUser(User user) {
         com.klic.user_service.external.resources.User userEntity = UserMapper.INSTANCE.toEntity(user);
-        com.klic.user_service.external.resources.User createdUser = userService.createUser(userEntity);
+        com.klic.user_service.external.resources.User createdUser = userServiceDb.createUser(userEntity);
         return new ResponseEntity<>(UserMapper.INSTANCE.toApi(createdUser), HttpStatus.CREATED);
     }
 
     @Override
     public ResponseEntity<Void> deleteUser(UUID id) {
-        userService.deleteUser(id);
+        userServiceDb.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Override
     public ResponseEntity<List<User>> getAllUsers() {
-        List<com.klic.user_service.external.resources.User> users = userService.getAllUsers();
+        List<com.klic.user_service.external.resources.User> users = userServiceDb.getAllUsers();
         List<User> userModels = users.stream().map(UserMapper.INSTANCE::toApi).collect(Collectors.toList());
         return new ResponseEntity<>(userModels, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<User> getUserById(UUID id) {
-        return userService.getUserById(id)
+        return userServiceDb.getUserById(id)
                 .map(user -> new ResponseEntity<>(UserMapper.INSTANCE.toApi(user), HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -49,7 +49,7 @@ public class UserController implements UsersApi {
     @Override
     public ResponseEntity<User> updateUser(UUID id, User user) {
         com.klic.user_service.external.resources.User userEntity = UserMapper.INSTANCE.toEntity(user);
-        com.klic.user_service.external.resources.User updatedUser = userService.updateUser(id, userEntity);
+        com.klic.user_service.external.resources.User updatedUser = userServiceDb.updateUser(id, userEntity);
         return new ResponseEntity<>(UserMapper.INSTANCE.toApi(updatedUser), HttpStatus.OK);
     }
 }
