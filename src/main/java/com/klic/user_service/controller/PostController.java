@@ -1,12 +1,15 @@
 package com.klic.user_service.controller;
 
 import com.klic.user_service.api.PostsApi;
+import com.klic.user_service.model.MediaResponse;
 import com.klic.user_service.model.Post;
+import com.klic.user_service.service.MediaService;
 import com.klic.user_service.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +19,7 @@ import java.util.UUID;
 public class PostController implements PostsApi {
 
     private final PostService postService;
+    private final MediaService mediaService;
 
     @Override
     public ResponseEntity<Post> createPost(Post post) {
@@ -47,5 +51,14 @@ public class PostController implements PostsApi {
         return postService.updatePost(id, post)
                 .map(updatedPost -> new ResponseEntity<>(updatedPost, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @Override
+    public ResponseEntity<MediaResponse> uploadPostMedia(UUID id, MultipartFile file, String takenLocation, String uploadedLocation) {
+        var media = mediaService.uploadMedia(id, file, takenLocation, uploadedLocation);
+        MediaResponse response = new MediaResponse();
+        response.setMediaId(media.getId());
+        response.setMediaPath(media.getMediaPath());
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }

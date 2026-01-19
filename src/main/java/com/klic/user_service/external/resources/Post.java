@@ -10,7 +10,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "posts")
+@Table(name = "POSTS", schema = "klic")
 @Setter
 @Getter
 public class Post {

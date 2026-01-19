@@ -177,6 +177,41 @@ paths:
       responses:
         '204':
           description: Post deleted successfully
+  /posts/{id}/media:
+    post:
+      summary: Upload media for a post
+      operationId: uploadPostMedia
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                takenLocation:
+                  type: string
+                  description: "WKT format POINT(lat lon)"
+                uploadedLocation:
+                  type: string
+                  description: "WKT format POINT(lat lon)"
+      responses:
+        '201':
+          description: Media uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaResponse'
+        '404':
+          description: Post not found
   /post-comments:
     get:
       summary: Get all post comments
@@ -461,8 +496,7 @@ components:
         email:
           type: string
           format: email
-          pattern: |
-            ^[a-zA-Z0-9_+&*-]+(?:\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,7}$
+          pattern: "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$"
         signupLocation:
           type: string
         createDateTime:
@@ -589,3 +623,11 @@ components:
           type: string
           format: date-time
           readOnly: true
+    MediaResponse:
+      type: object
+      properties:
+        mediaId:
+          type: string
+          format: uuid
+        mediaPath:
+          type: string

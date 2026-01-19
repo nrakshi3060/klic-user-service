@@ -1,17 +1,26 @@
 package com.klic.user_service.external.resources;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.locationtech.jts.geom.Point;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "POST_COMMENTS", schema = "klic")
+@Table(name = "MEDIA", schema = "klic")
 @Setter
 @Getter
-public class PostComment {
+public class Media {
 
     @Id
     @Column(name = "ID")
@@ -25,15 +34,14 @@ public class PostComment {
     @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PARENT_COMMENT_ID")
-    private PostComment parentComment;
+    @Column(name = "MEDIA_PATH", nullable = false, columnDefinition = "TEXT")
+    private String mediaPath;
 
-    @Column(name = "COMMENT_TEXT", nullable = false, columnDefinition = "TEXT")
-    private String commentText;
+    @Column(name = "TAKEN_LOCATION", columnDefinition = "geography(Point, 4326)")
+    private Point takenLocation;
 
-    @Column(name = "TOTAL_LIKES")
-    private Integer totalLikes = 0;
+    @Column(name = "UPLOADED_LOCATION", columnDefinition = "geography(Point, 4326)")
+    private Point uploadedLocation;
 
     @Column(name = "CREATE_DATE_TIME")
     private OffsetDateTime createDateTime;

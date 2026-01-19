@@ -10,12 +10,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.locationtech.jts.geom.Point;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "klic.USERS")
+@Table(name = "USERS", schema = "klic")
 @Setter
 @Getter
 @NoArgsConstructor
@@ -38,8 +39,8 @@ public class User {
     @Column(name = "EMAIL", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "SIGNUP_LOCATION")
-    private String signupLocation; // TODO: Replace with a proper geospatial type (e.g., JTS Geometry)
+    @Column(name = "SIGNUP_LOCATION", columnDefinition = "geography(Point, 4326)")
+    private Point signupLocation;
 
     @Column(name = "CREATE_DATE_TIME")
     private OffsetDateTime createDateTime;

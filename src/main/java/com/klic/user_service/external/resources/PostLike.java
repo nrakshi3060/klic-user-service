@@ -8,7 +8,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "post_likes")
+@Table(name = "POST_LIKES", schema = "klic")
 @Setter
 @Getter
 public class PostLike {
