@@ -12,6 +12,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class UserServiceDbTest {
@@ -29,16 +33,60 @@ class UserServiceDbTest {
 
     @Test
     void testGetUserById() {
-        UUID userId = UUID.randomUUID();
+        UUID id = UUID.randomUUID();
         User user = new User();
-        user.setId(userId);
-        user.setFirstName("John");
-        user.setLastName("Doe");
+        when(userRepository.findById(id)).thenReturn(Optional.of(user));
+        
+        Optional<User> result = userServiceDb.getUserById(id);
+        
+        assertTrue(result.isPresent());
+        verify(userRepository).findById(id);
+    }
 
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+    @Test
+    void testGetAllUsers() {
+        userServiceDb.getAllUsers();
+        verify(userRepository).findAll();
+    }
 
-        Optional<User> result = userServiceDb.getUserById(userId);
+    @Test
+    void testCreateUser() {
+        User user = new User();
+        userServiceDb.createUser(user);
+        verify(userRepository).save(user);
+    }
 
-        assertEquals(user, result.get());
+    @Test
+    void testUpdateUser_Success() {
+        UUID id = UUID.randomUUID();
+        User existing = new User();
+        User details = new User();
+        details.setFirstName("New");
+        details.setLastName("Name");
+        details.setUsername("newuser");
+        details.setEmail("new@example.com");
+
+        when(userRepository.findById(id)).thenReturn(Optional.of(existing));
+        when(userRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        User result = userServiceDb.updateUser(id, details);
+
+        assertEquals("New", result.getFirstName());
+        verify(userRepository).save(existing);
+    }
+
+    @Test
+    void testUpdateUser_NotFound() {
+        UUID id = UUID.randomUUID();
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> userServiceDb.updateUser(id, new User()));
+    }
+
+    @Test
+    void testDeleteUser() {
+        UUID id = UUID.randomUUID();
+        userServiceDb.deleteUser(id);
+        verify(userRepository).deleteById(id);
     }
 }

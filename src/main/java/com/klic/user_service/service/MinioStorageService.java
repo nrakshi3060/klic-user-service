@@ -15,14 +15,9 @@ public class MinioStorageService {
     private final MinioClient minioClient;
     private final String bucketName;
 
-    public MinioStorageService(@Value("${minio.url}") String url,
-                               @Value("${minio.access-key}") String accessKey,
-                               @Value("${minio.secret-key}") String secretKey,
+    public MinioStorageService(MinioClient minioClient,
                                @Value("${minio.bucket-name}") String bucketName) {
-        this.minioClient = MinioClient.builder()
-                .endpoint(url)
-                .credentials(accessKey, secretKey)
-                .build();
+        this.minioClient = minioClient;
         this.bucketName = bucketName;
     }
 
