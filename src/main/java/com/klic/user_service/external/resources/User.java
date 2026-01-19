@@ -36,7 +36,7 @@ public class User {
     @Column(name = "USERNAME", nullable = false, unique = true)
     private String username;
 
-    @Column(name = "EMAIL", nullable = false, unique = true)
+    @Column(name = "EMAIL", nullable = false, unique = true, columnDefinition = "citext")
     private String email;
 
     @Column(name = "SIGNUP_LOCATION", columnDefinition = "geography(Point, 4326)")

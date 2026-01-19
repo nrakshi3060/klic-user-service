@@ -70,8 +70,9 @@ public class PostCommentMapperTest {
         PostComment comment = postCommentMapper.toEntity(dto);
 
         assertNotNull(comment);
-        assertEquals(dto.getPostId(), comment.getPost().getId());
-        assertEquals(dto.getUserId(), comment.getUser().getId());
+        assertNull(comment.getPost());
+        assertNull(comment.getUser());
+        assertNull(comment.getParentComment());
         assertEquals(dto.getCommentText(), comment.getCommentText());
     }
 

@@ -10,168 +10,168 @@ databaseChangeLog:
             CREATE EXTENSION IF NOT EXISTS citext;
             CREATE EXTENSION IF NOT EXISTS postgis;
 
-            CREATE TABLE IF NOT EXISTS klic."USERS" (
-                "ID" UUID PRIMARY KEY,
-                "FIRST_NAME" VARCHAR(100) NOT NULL,
-                "LAST_NAME" VARCHAR(100) NOT NULL,
-                "USERNAME" VARCHAR(50) NOT NULL,
-                "EMAIL" CITEXT UNIQUE CHECK (length("EMAIL") <= 254),
-                "SIGNUP_LOCATION" GEOGRAPHY(POINT, 4326),
-                "CREATE_DATE_TIME" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-                "UPDATE_DATE_TIME" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+            CREATE TABLE IF NOT EXISTS klic.users (
+                id UUID PRIMARY KEY,
+                first_name VARCHAR(100) NOT NULL,
+                last_name VARCHAR(100) NOT NULL,
+                username VARCHAR(50) NOT NULL,
+                email CITEXT UNIQUE CHECK (length(email) <= 254),
+                signup_location GEOGRAPHY(POINT, 4326),
+                create_date_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                update_date_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
             );
 
-            CREATE TYPE klic."POST_TYPE" AS ENUM ('PHOTO', 'VIDEO', 'TEXT');
+            CREATE TYPE klic.post_type AS ENUM ('PHOTO', 'VIDEO', 'TEXT');
 
-            CREATE TABLE IF NOT EXISTS klic."POSTS" (
-                "ID" UUID PRIMARY KEY,
-                "USER_ID" UUID NOT NULL,
-                "POST_DESCRIPTION" TEXT NOT NULL,
-                "POST_TYPE" klic."POST_TYPE" NOT NULL,
-                "TOTAL_LIKES" INTEGER DEFAULT 0,
-                "TOTAL_COMMENTS" INTEGER DEFAULT 0,
-                "CREATE_DATE_TIME" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-                "UPDATE_DATE_TIME" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-                CONSTRAINT "FK_POSTS_USER" FOREIGN KEY ("USER_ID")
-                    REFERENCES klic."USERS" ("ID") ON DELETE CASCADE
+            CREATE TABLE IF NOT EXISTS klic.posts (
+                id UUID PRIMARY KEY,
+                user_id UUID NOT NULL,
+                post_description TEXT NOT NULL,
+                post_type klic.post_type NOT NULL,
+                total_likes INTEGER DEFAULT 0,
+                total_comments INTEGER DEFAULT 0,
+                create_date_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                update_date_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                CONSTRAINT fk_posts_user FOREIGN KEY (user_id)
+                    REFERENCES klic.users (id) ON DELETE CASCADE
             );
 
             CREATE EXTENSION IF NOT EXISTS postgis;
 
-            CREATE TABLE IF NOT EXISTS klic."MEDIA" (
-                "ID" UUID PRIMARY KEY,
-                "POST_ID" UUID NOT NULL,
-                "USER_ID" UUID NOT NULL,
-                "MEDIA_PATH" TEXT NOT NULL,
-                "TAKEN_LOCATION" GEOGRAPHY(POINT, 4326),
-                "UPLOADED_LOCATION" GEOGRAPHY(POINT, 4326),
-                "CREATE_DATE_TIME" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-                "UPDATE_DATE_TIME" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-                CONSTRAINT "FK_MEDIA_POST" FOREIGN KEY ("POST_ID")
-                    REFERENCES klic."POSTS" ("ID") ON DELETE CASCADE,
-                CONSTRAINT "FK_MEDIA_USER" FOREIGN KEY ("USER_ID")
-                    REFERENCES klic."USERS" ("ID") ON DELETE CASCADE
+            CREATE TABLE IF NOT EXISTS klic.media (
+                id UUID PRIMARY KEY,
+                post_id UUID NOT NULL,
+                user_id UUID NOT NULL,
+                media_path TEXT NOT NULL,
+                taken_location GEOGRAPHY(POINT, 4326),
+                uploaded_location GEOGRAPHY(POINT, 4326),
+                create_date_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                update_date_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                CONSTRAINT fk_media_post FOREIGN KEY (post_id)
+                    REFERENCES klic.posts (id) ON DELETE CASCADE,
+                CONSTRAINT fk_media_user FOREIGN KEY (user_id)
+                    REFERENCES klic.users (id) ON DELETE CASCADE
             );
 
 
-            CREATE TABLE IF NOT EXISTS klic."POST_COMMENTS" (
-                "ID" UUID PRIMARY KEY,
-                "POST_ID" UUID NOT NULL,
-                "USER_ID" UUID NOT NULL,
-                "PARENT_COMMENT_ID" UUID NULL,
-                "COMMENT_TEXT" TEXT NOT NULL,
-                "TOTAL_LIKES" INTEGER DEFAULT 0,
-                "CREATE_DATE_TIME" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-                "UPDATE_DATE_TIME" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+            CREATE TABLE IF NOT EXISTS klic.post_comments (
+                id UUID PRIMARY KEY,
+                post_id UUID NOT NULL,
+                user_id UUID NOT NULL,
+                parent_comment_id UUID NULL,
+                comment_text TEXT NOT NULL,
+                total_likes INTEGER DEFAULT 0,
+                create_date_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                update_date_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 
                 -- Foreign key to POSTS table
-                CONSTRAINT "FK_COMMENT_POST"
-                    FOREIGN KEY ("POST_ID")
-                    REFERENCES klic."POSTS" ("ID")
+                CONSTRAINT fk_comment_post
+                    FOREIGN KEY (post_id)
+                    REFERENCES klic.posts (id)
                     ON DELETE CASCADE,
 
                 -- Foreign key to USERS table
-                CONSTRAINT "FK_COMMENT_USER"
-                    FOREIGN KEY ("USER_ID")
-                    REFERENCES klic."USERS" ("ID")
+                CONSTRAINT fk_comment_user
+                    FOREIGN KEY (user_id)
+                    REFERENCES klic.users (id)
                     ON DELETE CASCADE,
 
                 -- Self-referencing foreign key to support comment replies
-                CONSTRAINT "FK_PARENT_COMMENT"
-                    FOREIGN KEY ("PARENT_COMMENT_ID")
-                    REFERENCES klic."POST_COMMENTS" ("ID")
+                CONSTRAINT fk_parent_comment
+                    FOREIGN KEY (parent_comment_id)
+                    REFERENCES klic.post_comments (id)
                     ON DELETE CASCADE
             );
 
-            CREATE TABLE IF NOT EXISTS klic."POST_LIKES" (
-                "ID" UUID PRIMARY KEY,
-                "POST_ID" UUID NOT NULL,
-                "USER_ID" UUID NOT NULL,
-                "IS_LIKE" BOOLEAN DEFAULT TRUE,
-                "CREATE_DATE_TIME" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+            CREATE TABLE IF NOT EXISTS klic.post_likes (
+                id UUID PRIMARY KEY,
+                post_id UUID NOT NULL,
+                user_id UUID NOT NULL,
+                is_like BOOLEAN DEFAULT TRUE,
+                create_date_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 
-                CONSTRAINT "FK_POST_LIKE_POST"
-                    FOREIGN KEY ("POST_ID")
-                    REFERENCES klic."POSTS" ("ID")
+                CONSTRAINT fk_post_like_post
+                    FOREIGN KEY (post_id)
+                    REFERENCES klic.posts (id)
                     ON DELETE CASCADE,
 
-                CONSTRAINT "FK_POST_LIKE_USER"
-                    FOREIGN KEY ("USER_ID")
-                    REFERENCES klic."USERS" ("ID")
+                CONSTRAINT fk_post_like_user
+                    FOREIGN KEY (user_id)
+                    REFERENCES klic.users (id)
                     ON DELETE CASCADE,
 
                 -- Ensure a user can only like the same post once
-                CONSTRAINT "UQ_POST_LIKE_USER_POST" UNIQUE ("POST_ID", "USER_ID")
+                CONSTRAINT uq_post_like_user_post UNIQUE (post_id, user_id)
             );
 
-            CREATE TABLE IF NOT EXISTS klic."COMMENT_LIKES" (
-                "ID" UUID PRIMARY KEY,
-                "COMMENT_ID" UUID NOT NULL,
-                "USER_ID" UUID NOT NULL,
-                "IS_LIKE" BOOLEAN DEFAULT TRUE,
-                "CREATE_DATE_TIME" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-                "UPDATE_DATE_TIME" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+            CREATE TABLE IF NOT EXISTS klic.comment_likes (
+                id UUID PRIMARY KEY,
+                comment_id UUID NOT NULL,
+                user_id UUID NOT NULL,
+                is_like BOOLEAN DEFAULT TRUE,
+                create_date_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                update_date_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 
-                CONSTRAINT "FK_COMMENT_LIKE_COMMENT"
-                    FOREIGN KEY ("COMMENT_ID")
-                    REFERENCES klic."POST_COMMENTS" ("ID")
+                CONSTRAINT fk_comment_like_comment
+                    FOREIGN KEY (comment_id)
+                    REFERENCES klic.post_comments (id)
                     ON DELETE CASCADE,
 
-                CONSTRAINT "FK_COMMENT_LIKE_USER"
-                    FOREIGN KEY ("USER_ID")
-                    REFERENCES klic."USERS" ("ID")
+                CONSTRAINT fk_comment_like_user
+                    FOREIGN KEY (user_id)
+                    REFERENCES klic.users (id)
                     ON DELETE CASCADE,
 
-                CONSTRAINT "UQ_COMMENT_LIKE_USER_COMMENT"
-                    UNIQUE ("COMMENT_ID", "USER_ID")
+                CONSTRAINT uq_comment_like_user_comment
+                    UNIQUE (comment_id, user_id)
             );
 
-            CREATE TABLE IF NOT EXISTS klic."USER_FOLLOWERS" (
-                "ID" UUID PRIMARY KEY,
-                "USER_ID" UUID NOT NULL,        -- The user being followed
-                "FOLLOWER_ID" UUID NOT NULL,   -- The user who follows
-                "CREATE_DATE_TIME" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-                "UPDATE_DATE_TIME" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+            CREATE TABLE IF NOT EXISTS klic.user_followers (
+                id UUID PRIMARY KEY,
+                user_id UUID NOT NULL,        -- The user being followed
+                follower_id UUID NOT NULL,   -- The user who follows
+                create_date_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                update_date_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 
-                CONSTRAINT "FK_USER_FOLLOWED"
-                    FOREIGN KEY ("USER_ID")
-                    REFERENCES klic."USERS" ("ID")
+                CONSTRAINT fk_user_followed
+                    FOREIGN KEY (user_id)
+                    REFERENCES klic.users (id)
                     ON DELETE CASCADE,
 
-                CONSTRAINT "FK_USER_FOLLOWER"
-                    FOREIGN KEY ("FOLLOWER_ID")
-                    REFERENCES klic."USERS" ("ID")
+                CONSTRAINT fk_user_follower
+                    FOREIGN KEY (follower_id)
+                    REFERENCES klic.users (id)
                     ON DELETE CASCADE,
 
                 -- Prevent same user from following the same person twice
-                CONSTRAINT "UQ_USER_FOLLOWER_PAIR"
-                    UNIQUE ("USER_ID", "FOLLOWER_ID"),
+                CONSTRAINT uq_user_follower_pair
+                    UNIQUE (user_id, follower_id),
 
                 -- Prevent users from following themselves
-                CONSTRAINT "CHK_NO_SELF_FOLLOW"
-                    CHECK ("USER_ID" <> "FOLLOWER_ID")
+                CONSTRAINT chk_no_self_follow
+                    CHECK (user_id <> follower_id)
             );
 
-            CREATE TABLE IF NOT EXISTS klic."USER_FEED" (
-                "ID" UUID PRIMARY KEY,
+            CREATE TABLE IF NOT EXISTS klic.user_feed (
+                id UUID PRIMARY KEY,
 
                 -- The user who receives the feed item
-                "USER_ID" UUID NOT NULL,
+                user_id UUID NOT NULL,
 
                 -- Reference to the related post
-                "POST_ID" UUID NULL,
+                post_id UUID NULL,
 
                 -- Timestamps
-                "CREATE_DATE_TIME" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-                "UPDATE_DATE_TIME" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                create_date_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                update_date_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 
                 -- Foreign keys
-                CONSTRAINT "FK_FEED_USER"
-                    FOREIGN KEY ("USER_ID") REFERENCES klic."USERS" ("ID")
+                CONSTRAINT fk_feed_user
+                    FOREIGN KEY (user_id) REFERENCES klic.users (id)
                     ON DELETE CASCADE,
 
-                CONSTRAINT "FK_FEED_POST"
-                    FOREIGN KEY ("POST_ID") REFERENCES klic."POSTS" ("ID")
+                CONSTRAINT fk_feed_post
+                    FOREIGN KEY (post_id) REFERENCES klic.posts (id)
                     ON DELETE SET NULL
 
             );

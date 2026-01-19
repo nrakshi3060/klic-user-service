@@ -12,8 +12,8 @@ public interface PostCommentMapper {
     @Mapping(source = "parentComment.id", target = "parentCommentId")
     com.klic.user_service.model.PostComment toDto(PostComment postComment);
 
-    @Mapping(source = "postId", target = "post.id")
-    @Mapping(source = "userId", target = "user.id")
-    @Mapping(source = "parentCommentId", target = "parentComment.id")
+    @Mapping(target = "post", ignore = true)
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "parentComment", ignore = true)
     PostComment toEntity(com.klic.user_service.model.PostComment postComment);
 }

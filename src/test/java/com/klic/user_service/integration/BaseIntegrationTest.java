@@ -26,14 +26,26 @@ public abstract class BaseIntegrationTest {
             .withUsername("test")
             .withPassword("test");
 
-    static final MinIOContainer minio = new MinIOContainer(DockerImageName.parse("minio/minio:latest"))
-            .withEnv("MINIO_ROOT_USER", "minioadmin")
-            .withEnv("MINIO_ROOT_PASSWORD", "minioadminpassword");
+    static final MinIOContainer minio = new MinIOContainer(DockerImageName.parse("minio/minio:latest"));
 
     @BeforeAll
     static void beforeAll() {
         postgres.start();
         minio.start();
+
+        try {
+            io.minio.MinioClient client = io.minio.MinioClient.builder()
+                    .endpoint(minio.getS3URL())
+                    .credentials(minio.getUserName(), minio.getPassword())
+                    .build();
+
+            boolean found = client.bucketExists(io.minio.BucketExistsArgs.builder().bucket("klic-media").build());
+            if (!found) {
+                client.makeBucket(io.minio.MakeBucketArgs.builder().bucket("klic-media").build());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Could not create MinIO bucket", e);
+        }
     }
 
     @AfterAll
